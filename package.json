@@ -1,14 +1,11 @@
 {
-  "name": "nodejs-app",
+  "name": "esp32-global-server",
   "version": "1.0.0",
-  "description": "A minimal Node.js web application.",
-  "main": "app.js",
-  "author": "alphasec",
-  "license": "MIT",
-  "dependencies": {
-    "express": "^4.19.2"
-  },
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.13.0"
   }
 }
