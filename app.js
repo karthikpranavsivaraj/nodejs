@@ -1,21 +1,22 @@
-const express = require('express');
-const path = require('path');
-const indexRouter = require('./routes/index');
+const http = require("http");
+const fs = require("fs");
+const WebSocket = require("ws");
 
-const app = express();
-const PORT = 3000;
+const server = http.createServer();
+const wss = new WebSocket.Server({ server, path: "/mqtt" });
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+wss.on("connection", (ws) => {
+  console.log("ESP32 connected");
 
-// Use the router for handling routes
-app.use('/', indexRouter);
-
-// Catch-all route for handling 404 errors
-app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+  ws.on("message", (msg) => {
+    console.log("Received:", msg.toString());
+    fs.appendFileSync("events.log", msg.toString() + "\n");
+    ws.send(JSON.stringify({ status: "ok" }));
   });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+  ws.on("close", () => console.log("ESP32 disconnected"));
 });
+
+server.listen(process.env.PORT || 8080, () =>
+  console.log("Server listening on port", process.env.PORT || 8080)
+);
